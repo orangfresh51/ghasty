@@ -670,3 +670,59 @@
           if(!amt) throw new Error("mint amount is empty");
           log("ghost","sending mintTo …");
           const tx = await c.mintTo(to, BigInt(amt));
+          log("ok","tx submitted", {hash: tx.hash});
+          const rc = await tx.wait();
+          log("ok","tx confirmed", {hash: tx.hash, status: rc.status});
+        }catch(e){
+          log("bad","mint failed", String(e));
+        }
+      }
+
+      async function sendPause(action){
+        try{
+          const c = getToken();
+          log("ghost",`${action} …`);
+          const tx = action === "pause" ? await c.pause() : await c.unpause();
+          log("ok","tx submitted", {hash: tx.hash});
+          const rc = await tx.wait();
+          log("ok","tx confirmed", {hash: tx.hash, status: rc.status});
+        }catch(e){
+          log("bad",`${action} failed`, String(e));
+        }
+      }
+
+      function parseBatchLines(text){
+        const lines = text.split(/\r?\n/).map(x => x.trim()).filter(Boolean);
+        const recipients = [];
+        const amounts = [];
+        for(const ln of lines){
+          const parts = ln.split(",").map(x => x.trim());
+          if(parts.length !== 2) throw new Error(`Bad line: ${ln}`);
+          recipients.push(parts[0]);
+          amounts.push(BigInt(parts[1]));
+        }
+        return {recipients, amounts};
+      }
+
+      async function sendBatch(){
+        try{
+          const c = getToken();
+          const {recipients, amounts} = parseBatchLines($("batchLines").value);
+          log("ghost","sending batchTransfer …", {count: recipients.length});
+          const tx = await c.batchTransfer(recipients, amounts);
+          log("ok","tx submitted", {hash: tx.hash});
+          const rc = await tx.wait();
+          log("ok","tx confirmed", {hash: tx.hash, status: rc.status});
+        }catch(e){
+          log("bad","batch failed", String(e));
+        }
+      }
+
+      // ---------------------------
+      // API mode: build calldata / deploy
+      // ---------------------------
+      function apiBase(){
+        const base = ($("apiBaseInput").value || S.apiBase).trim();
+        S.apiBase = base;
+        $("apiBase").textContent = base;
+        persist();
