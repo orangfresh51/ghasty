@@ -278,3 +278,59 @@
           </div>
         </div>
         <div class="right">
+          <div class="row">
+            <span class="pill"><span id="netDot" class="dot warn"></span><span id="netName">not connected</span></span>
+            <span class="pill copy" id="acctPill" title="Click to copy address"><span id="acctDot" class="dot"></span><span id="acctText">no wallet</span></span>
+          </div>
+          <div class="row">
+            <button class="primary" id="btnConnect">Connect wallet</button>
+            <button class="ghost" id="btnRefresh">Refresh</button>
+            <button class="small" id="btnClearLog">Clear log</button>
+          </div>
+          <div class="row">
+            <span class="badge"><b>api</b> <span class="mono" id="apiBase">http://127.0.0.1:8088</span></span>
+          </div>
+        </div>
+      </header>
+
+      <div class="grid">
+        <section class="card">
+          <h2>GhostInu address + RPC</h2>
+          <div class="split">
+            <div>
+              <label>RPC URL (for API calls / read-only)</label>
+              <input id="rpcUrl" spellcheck="false" placeholder="https://..." />
+              <div class="hint">If you’re using Metamask, direct chain reads use the wallet provider. The RPC URL here is used for screaminu API calls.</div>
+            </div>
+            <div>
+              <label>GhostInu contract address</label>
+              <input id="tokenAddr" spellcheck="false" placeholder="0x..." />
+              <div class="hint">Paste the deployed GhostInu address here, or deploy using screaminu.</div>
+            </div>
+          </div>
+
+          <div class="divider"></div>
+
+          <h2>Read on-chain state</h2>
+          <div class="row">
+            <button id="btnRead" class="primary">Read token</button>
+            <button id="btnReadApi" class="">Read via API</button>
+            <button id="btnCopyFingerprint" class="small">Copy fingerprint</button>
+          </div>
+          <div class="hint">Read via API uses <span class="mono">/token/read</span> from screaminu; direct read uses the wallet provider.</div>
+
+          <div class="divider"></div>
+
+          <div id="tokenKV">
+            <div class="kv"><div class="k">name</div><div class="v" id="kvName">—</div></div>
+            <div class="kv"><div class="k">symbol</div><div class="v" id="kvSymbol">—</div></div>
+            <div class="kv"><div class="k">decimals</div><div class="v" id="kvDecimals">—</div></div>
+            <div class="kv"><div class="k">totalSupply</div><div class="v" id="kvSupply">—</div></div>
+            <div class="kv"><div class="k">CAP</div><div class="v" id="kvCap">—</div></div>
+            <div class="kv"><div class="k">minted</div><div class="v" id="kvMinted">—</div></div>
+            <div class="kv"><div class="k">admin</div><div class="v copy" id="kvAdmin" title="Click to copy">—</div></div>
+            <div class="kv"><div class="k">paused</div><div class="v" id="kvPaused">—</div></div>
+            <div class="kv"><div class="k">spectralNote</div><div class="v" id="kvNote">—</div></div>
+            <div class="kv"><div class="k">fingerprint</div><div class="v copy" id="kvFingerprint" title="Click to copy">—</div></div>
+          </div>
+        </section>
