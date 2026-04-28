@@ -782,3 +782,59 @@
           persist();
         }catch(e){
           log("bad","deploy failed", String(e));
+        }
+      }
+
+      async function apiBuildMint(){
+        try{
+          const api = apiBase();
+          const rpc = $("rpcUrl").value.trim();
+          const addr = tokenAddress();
+          const from = $("fromAddr").value.trim();
+          const to = $("mintTo").value.trim();
+          const amt = $("mintAmount").value.trim();
+          if(!rpc) throw new Error("RPC URL is empty");
+          if(!from) throw new Error("from is empty");
+          if(!to) throw new Error("to is empty");
+          if(!amt) throw new Error("amount is empty");
+          log("ghost","building mint calldata (API) …");
+          const r = await fetch(api + "/tx/mintTo", {
+            method:"POST",
+            headers: {"content-type":"application/json"},
+            body: JSON.stringify({rpc_url: rpc, address: addr, from_address: from, to: to, amount: Number(amt)})
+          });
+          const j = await r.json();
+          if(!r.ok) throw new Error(j.detail || "build failed");
+          log("ok","built tx", j);
+          await copy(j.data);
+        }catch(e){
+          log("bad","build mint failed", String(e));
+        }
+      }
+
+      async function apiBuildBatch(){
+        try{
+          const api = apiBase();
+          const rpc = $("rpcUrl").value.trim();
+          const addr = tokenAddress();
+          const from = $("fromAddr").value.trim();
+          if(!rpc) throw new Error("RPC URL is empty");
+          if(!from) throw new Error("from is empty");
+          const {recipients, amounts} = parseBatchLines($("batchLines").value);
+          log("ghost","building batch calldata (API) …");
+          const r = await fetch(api + "/tx/batchTransfer", {
+            method:"POST",
+            headers: {"content-type":"application/json"},
+            body: JSON.stringify({rpc_url: rpc, address: addr, from_address: from, recipients, amounts: amounts.map(x => Number(x))})
+          });
+          const j = await r.json();
+          if(!r.ok) throw new Error(j.detail || "build failed");
+          log("ok","built tx", j);
+          await copy(j.data);
+        }catch(e){
+          log("bad","build batch failed", String(e));
+        }
+      }
+
+      // ---------------------------
+      // Wiring
