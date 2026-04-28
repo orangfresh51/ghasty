@@ -334,3 +334,59 @@
             <div class="kv"><div class="k">fingerprint</div><div class="v copy" id="kvFingerprint" title="Click to copy">—</div></div>
           </div>
         </section>
+
+        <aside class="card">
+          <h2>Actions</h2>
+          <label>From (wallet)</label>
+          <input id="fromAddr" spellcheck="false" placeholder="0x..." />
+          <div class="hint">This is used when building transaction calldata in API mode.</div>
+
+          <label>Mint to</label>
+          <div class="split">
+            <input id="mintTo" spellcheck="false" placeholder="to: 0x..." />
+            <input id="mintAmount" spellcheck="false" placeholder="amount (wei)" />
+          </div>
+          <div class="row">
+            <button id="btnBuildMint" class="ghost">Build mint tx (API)</button>
+            <button id="btnSendMint" class="primary">Send mint tx (wallet)</button>
+          </div>
+          <div class="hint">Mint can only be called once, by admin, up to CAP.</div>
+
+          <label>Pause controls</label>
+          <div class="row">
+            <button id="btnPause" class="danger">Pause (wallet)</button>
+            <button id="btnUnpause" class="ghost">Unpause (wallet)</button>
+          </div>
+
+          <label>Batch transfer</label>
+          <textarea id="batchLines" spellcheck="false" placeholder="one per line: 0xRecipient,amountWei"></textarea>
+          <div class="row">
+            <button id="btnBuildBatch" class="ghost">Build batch tx (API)</button>
+            <button id="btnSendBatch" class="primary">Send batch tx (wallet)</button>
+          </div>
+
+          <div class="divider"></div>
+
+          <h2>Deploy via screaminu</h2>
+          <div class="hint">
+            This calls <span class="mono">/deploy</span>. The app generates mixed-case checksum constructor addresses automatically.
+            Keep your private key local (env var in the Python process is recommended).
+          </div>
+          <label>API base</label>
+          <input id="apiBaseInput" spellcheck="false" placeholder="http://127.0.0.1:8088" />
+          <label>Private key (optional)</label>
+          <input id="deployPk" type="password" spellcheck="false" placeholder="0x... (leave blank to use server env)" />
+          <div class="row">
+            <button id="btnGenerate" class="ghost">Generate params</button>
+            <button id="btnDeploy" class="primary">Deploy GhostInu</button>
+          </div>
+
+          <label>Generated constructor params</label>
+          <textarea id="genParams" spellcheck="false" placeholder="{...}"></textarea>
+          <div class="mini">
+            <span class="pill copy" id="pillA"><span class="dot"></span><span class="mono">ADDRESS_A</span></span>
+            <span class="pill copy" id="pillB"><span class="dot"></span><span class="mono">ADDRESS_B</span></span>
+            <span class="pill copy" id="pillC"><span class="dot"></span><span class="mono">ADDRESS_C</span></span>
+            <span class="pill copy" id="pillHex"><span class="dot"></span><span class="mono">aux hex</span></span>
+          </div>
+        </aside>
