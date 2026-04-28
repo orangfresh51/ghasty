@@ -502,3 +502,59 @@
       }
 
       function restore(){
+        const raw = localStorage.getItem("ghasty.state");
+        if(!raw) return;
+        try{
+          const p = JSON.parse(raw);
+          if(p.apiBase) S.apiBase = p.apiBase;
+          if(p.tokenAddr) $("tokenAddr").value = p.tokenAddr;
+          if(p.rpcUrl) $("rpcUrl").value = p.rpcUrl;
+          if(p.fromAddr) $("fromAddr").value = p.fromAddr;
+        }catch(_){}
+      }
+
+      // ---------------------------
+      // Wallet connect / network
+      // ---------------------------
+      async function connect(){
+        if(!window.ethereum){
+          log("bad","No wallet provider found. Install Metamask or compatible wallet.");
+          setDot($("acctDot"), "bad");
+          return;
+        }
+        try{
+          const provider = new ethers.BrowserProvider(window.ethereum);
+          await provider.send("eth_requestAccounts", []);
+          const signer = await provider.getSigner();
+          const acct = await signer.getAddress();
+          const network = await provider.getNetwork();
+          S.provider = provider;
+          S.signer = signer;
+          S.account = acct;
+          S.chainId = Number(network.chainId);
+          S.netName = network.name || `chain-${S.chainId}`;
+          $("fromAddr").value = acct;
+          setDot($("acctDot"), "ok");
+          $("acctText").textContent = shorten(acct);
+          setDot($("netDot"), "ok");
+          $("netName").textContent = `${S.netName} (${S.chainId})`;
+          log("ok","wallet connected", {account: acct, chainId: S.chainId, network: S.netName});
+          persist();
+        }catch(e){
+          log("bad","wallet connect failed", String(e));
+          setDot($("acctDot"), "bad");
+        }
+      }
+
+      function shorten(a){
+        if(!a || a.length < 10) return a || "—";
+        return a.slice(0,6) + "…" + a.slice(-4);
+      }
+
+      function tokenAddress(){
+        const a = $("tokenAddr").value.trim();
+        if(!a) throw new Error("Token address is empty");
+        return a;
+      }
+
+      function getToken(){
