@@ -558,3 +558,59 @@
       }
 
       function getToken(){
+        const addr = tokenAddress();
+        if(!S.provider || !S.signer) throw new Error("Wallet not connected");
+        if(!S.token || S.tokenAddr !== addr){
+          S.tokenAddr = addr;
+          S.token = new ethers.Contract(addr, ABI_GHOSTINU, S.signer);
+        }
+        return S.token;
+      }
+
+      // ---------------------------
+      // Reads
+      // ---------------------------
+      async function readDirect(){
+        const c = getToken();
+        const out = {};
+        out.name = await c.name();
+        out.symbol = await c.symbol();
+        out.decimals = await c.decimals();
+        out.totalSupply = await c.totalSupply();
+        out.CAP = await c.CAP();
+        out.minted = await c.minted();
+        out.admin = await c.admin();
+        out.paused = await c.paused();
+        out.spectralNote = await c.spectralNote();
+        out.fingerprint = await c.ghostFingerprint();
+        return out;
+      }
+
+      function setKV(k, v){
+        $(k).textContent = v;
+      }
+
+      function fmtU(x){
+        try{
+          const s = x.toString();
+          if(s.length <= 6) return s;
+          return s.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+        }catch(_){
+          return String(x);
+        }
+      }
+
+      async function readToUI(out){
+        setKV("kvName", out.name ?? "—");
+        setKV("kvSymbol", out.symbol ?? "—");
+        setKV("kvDecimals", String(out.decimals ?? "—"));
+        setKV("kvSupply", fmtU(out.totalSupply ?? "—"));
+        setKV("kvCap", fmtU(out.CAP ?? out.cap ?? "—"));
+        setKV("kvMinted", String(out.minted ?? "—"));
+        $("kvAdmin").textContent = out.admin ? String(out.admin) : "—";
+        setKV("kvPaused", String(out.paused ?? "—"));
+        setKV("kvNote", out.spectralNote ?? out.spectral_note ?? "—");
+        const fp = out.fingerprint ?? out.ghostFingerprint ?? "—";
+        $("kvFingerprint").textContent = fp;
+        S.lastFingerprint = fp;
+      }
