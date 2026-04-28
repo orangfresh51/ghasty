@@ -726,3 +726,59 @@
         S.apiBase = base;
         $("apiBase").textContent = base;
         persist();
+        return base;
+      }
+
+      async function apiGenerate(){
+        try{
+          const api = apiBase();
+          const rpc = $("rpcUrl").value.trim();
+          const pk = $("deployPk").value.trim();
+          log("ghost","generate constructor params …");
+          const url = new URL(api + "/generate");
+          if(rpc) url.searchParams.set("rpc_url", rpc);
+          if(pk) url.searchParams.set("private_key", pk);
+          const r = await fetch(url.toString());
+          const j = await r.json();
+          if(!r.ok) throw new Error(j.detail || "generate failed");
+          S.lastGenerated = j.params;
+          S.lastAuxHex = j.aux_hex;
+          $("genParams").value = JSON.stringify(j, null, 2);
+          log("ok","generated", j);
+          wirePills(j);
+          persist();
+        }catch(e){
+          log("bad","generate failed", String(e));
+        }
+      }
+
+      function wirePills(j){
+        const p = j.params || {};
+        const h = j.aux_hex || {};
+        $("pillA").onclick = () => copy(p.addressA || "");
+        $("pillB").onclick = () => copy(p.addressB || "");
+        $("pillC").onclick = () => copy(p.addressC || "");
+        $("pillHex").onclick = () => copy(JSON.stringify(h));
+      }
+
+      async function apiDeploy(){
+        try{
+          const api = apiBase();
+          const rpc = $("rpcUrl").value.trim();
+          if(!rpc) throw new Error("RPC URL is empty");
+          const pk = $("deployPk").value.trim();
+          let body = { rpc_url: rpc, private_key: pk || "", params: null };
+          log("ghost","deploying via API …");
+          const r = await fetch(api + "/deploy", {
+            method:"POST",
+            headers: {"content-type":"application/json"},
+            body: JSON.stringify(body)
+          });
+          const j = await r.json();
+          if(!r.ok) throw new Error(j.detail || "deploy failed");
+          $("tokenAddr").value = j.contract_address;
+          $("genParams").value = JSON.stringify(j, null, 2);
+          log("ok","deployed", j);
+          persist();
+        }catch(e){
+          log("bad","deploy failed", String(e));
