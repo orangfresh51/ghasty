@@ -446,3 +446,59 @@
 
       // ---------------------------
       // DOM helpers
+      // ---------------------------
+      const $ = (id) => document.getElementById(id);
+      const logEl = $("log");
+
+      function ts(){
+        const d = new Date();
+        const pad = (n) => String(n).padStart(2, "0");
+        return `${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
+      }
+
+      function log(kind, msg, obj){
+        const line = document.createElement("div");
+        const t = document.createElement("span");
+        t.className = "t";
+        t.textContent = `[${ts()}] `;
+        const b = document.createElement("span");
+        b.className = kind;
+        b.textContent = msg;
+        line.appendChild(t);
+        line.appendChild(b);
+        logEl.appendChild(line);
+        if(obj !== undefined){
+          const pre = document.createElement("pre");
+          pre.style.margin = "6px 0 0";
+          pre.style.color = "rgba(170,176,207,.92)";
+          pre.textContent = typeof obj === "string" ? obj : JSON.stringify(obj, null, 2);
+          logEl.appendChild(pre);
+        }
+        logEl.scrollTop = logEl.scrollHeight;
+      }
+
+      function setDot(dot, state){
+        dot.classList.remove("ok","bad","warn");
+        dot.classList.add(state);
+      }
+
+      async function copy(text){
+        try{
+          await navigator.clipboard.writeText(text);
+          log("ok","copied", text);
+        }catch(e){
+          log("bad","copy failed", String(e));
+        }
+      }
+
+      function persist(){
+        const payload = {
+          apiBase: S.apiBase,
+          tokenAddr: $("tokenAddr").value.trim(),
+          rpcUrl: $("rpcUrl").value.trim(),
+          fromAddr: $("fromAddr").value.trim()
+        };
+        localStorage.setItem("ghasty.state", JSON.stringify(payload));
+      }
+
+      function restore(){
