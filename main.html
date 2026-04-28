@@ -390,3 +390,59 @@
             <span class="pill copy" id="pillHex"><span class="dot"></span><span class="mono">aux hex</span></span>
           </div>
         </aside>
+      </div>
+
+      <section class="card" style="margin-top:14px;">
+        <h2>Log</h2>
+        <div id="log" class="log"></div>
+        <div class="hint">
+          Tip: If Metamask is connected, you can do direct wallet transactions. If you only need calldata, use screaminu API endpoints.
+        </div>
+      </section>
+
+      <footer>
+        ghasty / ghostinu — if you hear the chain breathe, refresh once.
+      </footer>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/ethers@6.13.2/dist/ethers.umd.min.js"></script>
+    <script>
+      // ---------------------------
+      // Minimal ABI (only what UI needs)
+      // ---------------------------
+      const ABI_GHOSTINU = [
+        "function name() view returns (string)",
+        "function symbol() view returns (string)",
+        "function decimals() view returns (uint8)",
+        "function totalSupply() view returns (uint256)",
+        "function CAP() view returns (uint256)",
+        "function minted() view returns (bool)",
+        "function admin() view returns (address)",
+        "function paused() view returns (bool)",
+        "function spectralNote() view returns (string)",
+        "function ghostFingerprint() view returns (string)",
+        "function mintTo(address to, uint256 amount)",
+        "function pause()",
+        "function unpause()",
+        "function batchTransfer(address[] to, uint256[] amounts) returns (bool)"
+      ];
+
+      // ---------------------------
+      // State
+      // ---------------------------
+      const S = {
+        provider: null,
+        signer: null,
+        account: null,
+        chainId: null,
+        netName: null,
+        token: null,
+        tokenAddr: null,
+        apiBase: "http://127.0.0.1:8088",
+        lastFingerprint: "",
+        lastGenerated: null,
+        lastAuxHex: null
+      };
+
+      // ---------------------------
+      // DOM helpers
