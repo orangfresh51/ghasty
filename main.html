@@ -222,3 +222,59 @@
         font-family: var(--mono);
         font-size: 12px;
         line-height: 1.4;
+        min-height: 150px;
+        max-height: 330px;
+        overflow:auto;
+      }
+      .log .t{ color: rgba(170,176,207,.95); }
+      .log .ok{ color: rgba(124,255,210,.92); }
+      .log .bad{ color: rgba(255,107,136,.92); }
+      .log .ghost{ color: rgba(198,167,255,.92); }
+      footer{
+        margin-top: 14px;
+        font-size: 12px;
+        color: var(--muted);
+        text-align:center;
+      }
+      .hint{
+        margin-top: 8px;
+        font-size: 12px;
+        color: var(--muted);
+        line-height: 1.45;
+      }
+      .divider{
+        height: 1px;
+        background: linear-gradient(90deg, transparent, rgba(37,40,58,.9), transparent);
+        margin: 12px 0;
+      }
+      .mini{
+        display:flex;
+        gap:8px;
+        flex-wrap: wrap;
+        align-items:center;
+      }
+      .mini .pill{ padding:6px 9px; }
+      .copy{
+        cursor:pointer;
+        user-select:none;
+      }
+      .copy:hover{ border-color: rgba(124,255,210,.35); }
+    </style>
+  </head>
+  <body>
+    <div class="wrap">
+      <header>
+        <div class="brand">
+          <h1>ghasty</h1>
+          <div class="sub">
+            GhostInu control room — connect a wallet, read on-chain state, build transactions,
+            or use <span class="mono">screaminu</span> to deploy with auto-generated constructor params.
+          </div>
+          <div class="badges">
+            <span class="badge ghost"><b>style</b> AI ghost X scare bot</span>
+            <span class="badge"><b>token</b> ghostinu</span>
+            <span class="badge acid"><b>mode</b> ethers + optional API</span>
+            <span class="badge warn"><b>note</b> mainnet-safe defaults</span>
+          </div>
+        </div>
+        <div class="right">
