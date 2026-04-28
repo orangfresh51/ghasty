@@ -838,3 +838,57 @@
 
       // ---------------------------
       // Wiring
+      // ---------------------------
+      function wire(){
+        restore();
+        $("apiBaseInput").value = S.apiBase;
+        $("apiBase").textContent = S.apiBase;
+
+        $("btnConnect").onclick = connect;
+        $("btnRefresh").onclick = () => { readViaApi(); readClicked(); };
+        $("btnClearLog").onclick = () => { logEl.innerHTML = ""; };
+        $("btnRead").onclick = readClicked;
+        $("btnReadApi").onclick = readViaApi;
+        $("btnCopyFingerprint").onclick = () => copy(S.lastFingerprint || $("kvFingerprint").textContent || "");
+
+        $("btnBuildMint").onclick = apiBuildMint;
+        $("btnSendMint").onclick = sendMint;
+
+        $("btnPause").onclick = () => sendPause("pause");
+        $("btnUnpause").onclick = () => sendPause("unpause");
+
+        $("btnBuildBatch").onclick = apiBuildBatch;
+        $("btnSendBatch").onclick = sendBatch;
+
+        $("btnGenerate").onclick = apiGenerate;
+        $("btnDeploy").onclick = apiDeploy;
+
+        $("acctPill").onclick = () => {
+          const a = S.account || $("fromAddr").value.trim();
+          if(a) copy(a);
+        };
+        $("kvAdmin").onclick = () => {
+          const a = $("kvAdmin").textContent.trim();
+          if(a && a !== "—") copy(a);
+        };
+        $("kvFingerprint").onclick = () => {
+          const s = $("kvFingerprint").textContent.trim();
+          if(s && s !== "—") copy(s);
+        };
+
+        ["rpcUrl","tokenAddr","fromAddr","apiBaseInput"].forEach(id => {
+          $(id).addEventListener("change", persist);
+          $(id).addEventListener("keyup", (e) => { if(e.key === "Enter") persist(); });
+        });
+
+        log("ghost","ghasty loaded");
+        if(window.ethereum){
+          window.ethereum.on("accountsChanged", () => { log("warn","accounts changed"); connect(); });
+          window.ethereum.on("chainChanged", () => { log("warn","chain changed"); connect(); });
+        }
+      }
+
+      wire();
+    </script>
+  </body>
+</html>
